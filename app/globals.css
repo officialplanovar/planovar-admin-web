@@ -1,0 +1,104 @@
+@import url("https://fonts.googleapis.com/css2?family=Urbanist:wght@300;400;500;600;700;800;900&display=swap");
+@import "tailwindcss";
+
+@theme {
+  --color-sidebar: #0f0d2e;
+  --color-sidebar-active: #5b50f0;
+  --color-sidebar-hover: #1e1a4e;
+  --color-sidebar-label: #6b7280;
+  --color-sidebar-icon: #cbd5e1;
+  --color-sidebar-text: #e2e8f0;
+  --color-sidebar-badge: #1e1a4e;
+  --color-primary: #5b50f0;
+  --color-primary-dark: #4a3fe5;
+  --color-primary-light: #eeeeff;
+  --color-primary-mid: #7b6bff;
+  --color-page-bg: #f5f4fa;
+  --color-card-bg: #ffffff;
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #6b7280;
+  --color-text-hint: #9ca3af;
+  --color-border: #e5e7eb;
+  --color-status-active: #10b981;
+  --color-status-active-bg: #ecfdf5;
+  --color-status-pending: #f59e0b;
+  --color-status-pending-bg: #fffbeb;
+  --color-status-rejected: #ef4444;
+  --color-status-rejected-bg: #fef2f2;
+  --color-status-suspended: #f97316;
+  --color-status-suspended-bg: #fff7ed;
+  --color-status-banned: #ef4444;
+  --color-status-banned-bg: #fef2f2;
+  --color-status-investigating: #8b5cf6;
+  --color-status-investigating-bg: #f5f3ff;
+  --color-status-resolved: #10b981;
+  --color-status-resolved-bg: #ecfdf5;
+  --color-status-completed: #10b981;
+  --color-status-completed-bg: #ecfdf5;
+  --color-status-cancelled: #ef4444;
+  --color-status-cancelled-bg: #fef2f2;
+  --color-status-open: #ef4444;
+  --color-status-open-bg: #fef2f2;
+  --color-severity-high: #ef4444;
+  --color-severity-high-bg: #fef2f2;
+  --color-severity-medium: #f59e0b;
+  --color-severity-medium-bg: #fffbeb;
+  --color-severity-low: #6b7280;
+  --color-severity-low-bg: #f3f4f6;
+  --font-sans: "Urbanist", sans-serif;
+  --font-urbanist: "Urbanist", sans-serif;
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+body {
+  font-family: "Urbanist", sans-serif;
+  background-color: #f5f4fa;
+}
+
+/* ── Glossy button effect ────────────────────────────────────────────── */
+.btn-glossy {
+  position: relative;
+  overflow: hidden;
+  transition:
+    filter 0.15s ease,
+    transform 0.1s ease;
+}
+.btn-glossy::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.28) 0%,
+    rgba(255, 255, 255, 0.06) 50%,
+    rgba(0, 0, 0, 0.06) 100%
+  );
+  pointer-events: none;
+  border-radius: inherit;
+}
+.btn-glossy:hover {
+  filter: brightness(1.08);
+}
+.btn-glossy:active {
+  filter: brightness(0.96);
+  transform: scale(0.985);
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
