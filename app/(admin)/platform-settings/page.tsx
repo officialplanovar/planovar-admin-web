@@ -11,8 +11,6 @@ import { Input, Select } from '@/components/ui/FormField';
 
 type NavItem =
   | 'General'
-  | 'Commission & Fees'
-  | 'Payouts'
   | 'Categories & Tags'
   | 'Trust & Safety'
   | 'Notifications';
@@ -46,63 +44,6 @@ function Label({ children }: { children: React.ReactNode }) {
     <label className="block text-sm font-medium text-text-primary mb-1.5">
       {children}
     </label>
-  );
-}
-
-function TextInput({
-  value,
-  onChange,
-  prefix,
-  suffix,
-  type = 'text',
-}: {
-  value: string;
-  onChange: (v: string) => void;
-  prefix?: string;
-  suffix?: string;
-  type?: string;
-}) {
-  return (
-    <div className="flex items-center border border-border rounded-lg overflow-hidden bg-white focus-within:ring-2 focus-within:ring-primary/30">
-      {prefix && (
-        <span className="px-3 py-2.5 bg-gray-50 border-r border-border text-sm text-text-secondary font-medium select-none">
-          {prefix}
-        </span>
-      )}
-      <input
-        type={type}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="flex-1 px-3 py-2.5 text-sm text-text-primary outline-none bg-transparent"
-      />
-      {suffix && (
-        <span className="px-3 py-2.5 bg-gray-50 border-l border-border text-sm text-text-secondary font-medium select-none">
-          {suffix}
-        </span>
-      )}
-    </div>
-  );
-}
-
-function SelectInput({
-  value,
-  onChange,
-  options,
-}: {
-  value: string;
-  onChange: (v: string) => void;
-  options: string[];
-}) {
-  return (
-    <select
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      className="w-full border border-border rounded-lg px-3 py-2.5 text-sm text-text-primary bg-white outline-none focus:ring-2 focus:ring-primary/30"
-    >
-      {options.map((o) => (
-        <option key={o}>{o}</option>
-      ))}
-    </select>
   );
 }
 
@@ -176,140 +117,6 @@ function GeneralSection() {
         description="Put the platform in maintenance mode"
         on={maintenance}
         onChange={setMaintenance}
-      />
-    </div>
-  );
-}
-
-// ── Section: Commission & Fees ────────────────────────────────────────────────
-
-interface SubscriptionTier {
-  plan: string;
-  price: string;
-  duration: string;
-  features: string;
-}
-
-const defaultTiers: SubscriptionTier[] = [
-  { plan: 'Basic', price: '₦0', duration: 'Free', features: '' },
-  { plan: 'Featured', price: '₦5,000', duration: '1 month', features: 'Priority listing, analytics' },
-  { plan: 'Premium', price: '₦15,000', duration: '1 month', features: 'All features, dedicated support' },
-];
-
-function CommissionSection() {
-  const [product, setProduct] = useState('7.5');
-  const [service, setService] = useState('10');
-  const [tiers] = useState<SubscriptionTier[]>(defaultTiers);
-  const [editingTier, setEditingTier] = useState<SubscriptionTier | null>(null);
-
-  return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-        <FormField label="Product Commission %">
-          <TextInput value={product} onChange={setProduct} suffix="%" />
-        </FormField>
-        <FormField label="Service Commission %">
-          <TextInput value={service} onChange={setService} suffix="%" />
-        </FormField>
-      </div>
-
-      <div>
-        <h3 className="text-sm font-semibold text-text-primary mb-3">Subscription Tiers</h3>
-        <div className="bg-white border border-border rounded-xl overflow-hidden">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="bg-gray-50 border-b border-border text-xs text-text-secondary font-semibold">
-                <th className="px-4 py-3 text-left">Plan</th>
-                <th className="px-4 py-3 text-left">Price</th>
-                <th className="px-4 py-3 text-left">Duration</th>
-                <th className="px-4 py-3 text-left hidden sm:table-cell">Features</th>
-                <th className="px-4 py-3 text-left">Action</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border">
-              {tiers.map((t) => (
-                <tr key={t.plan} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-4 py-3 font-semibold text-text-primary">{t.plan}</td>
-                  <td className="px-4 py-3 text-text-primary">{t.price}<span className="text-text-secondary text-xs">{t.duration !== 'Free' ? '/month' : ''}</span></td>
-                  <td className="px-4 py-3 text-text-secondary">{t.duration}</td>
-                  <td className="px-4 py-3 text-text-secondary hidden sm:table-cell">{t.features || '—'}</td>
-                  <td className="px-4 py-3">
-                    <button
-                      onClick={() => setEditingTier(t)}
-                      className="text-xs font-semibold px-3 py-1 rounded-lg"
-                      style={{ color: '#5B50F0', backgroundColor: '#EEEEFF' }}
-                    >
-                      Edit
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {editingTier && (
-        <Modal open={true} onClose={() => setEditingTier(null)} title={`Edit ${editingTier.plan} Plan`}>
-          <div className="space-y-4">
-            <div>
-              <Label>Price</Label>
-              <TextInput value={editingTier.price} onChange={(v) => setEditingTier({ ...editingTier, price: v })} />
-            </div>
-            <div>
-              <Label>Duration</Label>
-              <TextInput value={editingTier.duration} onChange={(v) => setEditingTier({ ...editingTier, duration: v })} />
-            </div>
-            <div>
-              <Label>Features</Label>
-              <TextInput value={editingTier.features} onChange={(v) => setEditingTier({ ...editingTier, features: v })} />
-            </div>
-            <Button variant="primary" fullWidth onClick={() => setEditingTier(null)}>Save Changes</Button>
-          </div>
-        </Modal>
-      )}
-    </div>
-  );
-}
-
-// ── Section: Payouts ──────────────────────────────────────────────────────────
-
-function PayoutsSection() {
-  const [settlement, setSettlement] = useState('T+3 Business Days');
-  const [minPayout, setMinPayout] = useState('5,000');
-  const [autoPayout, setAutoPayout] = useState(false);
-  const [holdAll, setHoldAll] = useState(true);
-
-  return (
-    <div className="space-y-5">
-      <FormField label="Settlement Window">
-        <Select value={settlement} onChange={(e) => setSettlement(e.target.value)}>
-          {[
-            'T+1 Business Day',
-            'T+2 Business Days',
-            'T+3 Business Days',
-            'T+5 Business Days',
-            'T+7 Business Days',
-          ].map((o) => (
-            <option key={o}>{o}</option>
-          ))}
-        </Select>
-      </FormField>
-      <FormField label="Minimum Payout Amount">
-        <TextInput value={minPayout} onChange={setMinPayout} prefix="₦" />
-      </FormField>
-      <ToggleRow
-        label="Auto-Payout"
-        description="Automatically process payouts on schedule"
-        on={autoPayout}
-        onChange={setAutoPayout}
-      />
-      <ToggleRow
-        label="Hold All Payouts"
-        description="Manually hold all vendor payouts"
-        on={holdAll}
-        onChange={setHoldAll}
-        warn
       />
     </div>
   );
@@ -449,7 +256,6 @@ const NOTIF_EVENTS: NotifEvent[] = [
   { key: 'newVendor', label: 'New Vendor Registration' },
   { key: 'dispute', label: 'Dispute Opened' },
   { key: 'contentFlag', label: 'High Severity Content Flag' },
-  { key: 'failedPayout', label: 'Failed Payout' },
   { key: 'userReport', label: 'New User Report' },
 ];
 
@@ -459,7 +265,6 @@ function NotificationsSection() {
     newVendor: true,
     dispute: true,
     contentFlag: true,
-    failedPayout: true,
     userReport: true,
   });
 
@@ -505,8 +310,6 @@ function NotificationsSection() {
 
 const NAV_ITEMS: NavItem[] = [
   'General',
-  'Commission & Fees',
-  'Payouts',
   'Categories & Tags',
   'Trust & Safety',
   'Notifications',
@@ -518,8 +321,6 @@ export default function PlatformSettingsPage() {
   function renderContent() {
     switch (active) {
       case 'General':           return <GeneralSection />;
-      case 'Commission & Fees': return <CommissionSection />;
-      case 'Payouts':           return <PayoutsSection />;
       case 'Categories & Tags': return <CategoriesSection />;
       case 'Trust & Safety':    return <TrustSafetySection />;
       case 'Notifications':     return <NotificationsSection />;

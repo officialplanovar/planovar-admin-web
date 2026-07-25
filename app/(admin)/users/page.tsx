@@ -294,7 +294,7 @@ function ProfileDialog({
         {/* actions */}
         <div className="flex gap-3 mt-6 pt-4 border-t border-border">
           <Button variant="warning" size="sm" onClick={onSuspend}>Suspend User</Button>
-          <Button variant="danger" size="sm">Ban Forever</Button>
+          <Button variant="danger" size="sm">Delete Profile</Button>
         </div>
       </Modal>
 
@@ -362,7 +362,7 @@ function ActionMenu({
             className="w-full text-left px-4 py-2 text-sm hover:bg-page-bg"
             style={{ color: '#EF4444' }}
           >
-            Ban Forever
+            Delete Profile
           </button>
         </div>
       )}
