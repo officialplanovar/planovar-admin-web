@@ -55,6 +55,23 @@
     margin: 0;
     padding: 0;
   }
+
+  /* Interactive elements show a pointer on hover (Tailwind v4 Preflight
+     no longer sets this). Disabled controls fall back to not-allowed. */
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  [role="switch"],
+  [role="tab"],
+  label[for],
+  summary,
+  select {
+    cursor: pointer;
+  }
+
+  button:disabled,
+  [aria-disabled="true"] {
+    cursor: not-allowed;
+  }
 }
 
 body {
