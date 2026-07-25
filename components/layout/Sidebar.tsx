@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 
 const navItems = [
@@ -43,8 +44,14 @@ export default function Sidebar() {
     <aside className="w-[270px] min-h-screen bg-sidebar flex flex-col flex-shrink-0">
       {/* Logo */}
       <div className="px-5 py-6 flex items-center gap-3">
-        <div className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center flex-shrink-0">
-          <span className="text-white font-black text-lg leading-none">P</span>
+        <div className="w-9 h-9 rounded-lg bg-white flex items-center justify-center flex-shrink-0 overflow-hidden">
+          <Image
+            src="/planovar-mark.png"
+            alt="Planovar"
+            width={36}
+            height={36}
+            className="w-full h-full object-contain"
+          />
         </div>
         <div>
           <p className="text-white font-bold text-[15px] leading-tight">Planovar</p>
