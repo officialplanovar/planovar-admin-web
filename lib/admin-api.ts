@@ -123,6 +123,8 @@ interface ApiVendor {
   subscriptionTier: string;
   kycStatus: "NOT_SUBMITTED" | "SUBMITTED" | "APPROVED" | "REJECTED";
   isVerified: boolean;
+  ninDocumentUrl?: string | null;
+  cacDocumentUrl?: string | null;
   kycSubmittedAt?: string | null;
   createdAt: string;
   user?: { id: string; name: string; email: string; phone?: string | null; isActive: boolean } | null;
@@ -147,6 +149,8 @@ function mapVendor(v: ApiVendor): AdminVendor {
     phone: v.user?.phone ?? "—",
     avatarText: initials(name),
     avatarColor: colorFor(v.id),
+    ninDocumentUrl: v.ninDocumentUrl ?? null,
+    cacDocumentUrl: v.cacDocumentUrl ?? null,
   };
 }
 
@@ -433,6 +437,32 @@ export interface RevenueSummary {
 
 export async function getRevenue(): Promise<RevenueSummary> {
   return apiFetch<RevenueSummary>("/admin/revenue");
+}
+
+// ── Search / Typesense ───────────────────────────────────────────────────────
+export interface SearchCollectionHealth {
+  collection: string;
+  exists: boolean;
+  numDocuments: number;
+  missingFields: string[];
+  inSync: boolean;
+  error?: string;
+}
+
+export interface SearchHealth {
+  status: "ok" | "degraded" | "unreachable";
+  reachable: boolean;
+  collections: SearchCollectionHealth[];
+}
+
+/** Typesense reachability + per-collection doc counts and schema drift. */
+export async function getSearchHealth(): Promise<SearchHealth> {
+  return apiFetch<SearchHealth>("/search/health");
+}
+
+/** Bulk re-sync all listings and vendors into Typesense. */
+export async function runSearchSync(): Promise<{ message: string }> {
+  return apiFetch<{ message: string }>("/search/admin/sync", { method: "POST" });
 }
 
 // ── Audit log ──────────────────────────────────────────────────────────────

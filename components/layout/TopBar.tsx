@@ -1,6 +1,7 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
 import { useAuth } from "@/lib/auth-context";
+import SyncButton from "./SyncButton";
 
 function initials(name?: string | null) {
   if (!name) return "?";
@@ -68,6 +69,9 @@ export default function TopBar() {
           </div>
         )}
       </div>
+
+      {/* Search index sync */}
+      <SyncButton />
 
       {/* Notification */}
       <div className="relative">

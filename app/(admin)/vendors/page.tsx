@@ -31,7 +31,8 @@ type RejectReason =
 
 // ── PDF file tile ─────────────────────────────────────────────────────────────
 
-function FileTile({ name }: { name: string }) {
+function FileTile({ name, url }: { name: string; url?: string | null }) {
+  const hasDoc = !!url;
   return (
     <div className="flex items-center gap-3 p-3 rounded-xl bg-gray-50 border border-border">
       <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: "#FEF2F2" }}>
@@ -41,11 +42,23 @@ function FileTile({ name }: { name: string }) {
       </div>
       <div className="flex-1 min-w-0">
         <p className="text-sm font-medium text-text-primary truncate">{name}</p>
-        <p className="text-xs text-text-secondary">PDF Document</p>
+        <p className="text-xs text-text-secondary">{hasDoc ? "Uploaded document" : "Not provided"}</p>
       </div>
-      <button className="text-xs font-semibold flex-shrink-0" style={{ color: "#5B50F0" }}>
-        View
-      </button>
+      {hasDoc ? (
+        <a
+          href={url!}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-xs font-semibold flex-shrink-0 hover:underline"
+          style={{ color: "#5B50F0" }}
+        >
+          View
+        </a>
+      ) : (
+        <span className="text-xs font-semibold flex-shrink-0 text-text-secondary opacity-50">
+          View
+        </span>
+      )}
     </div>
   );
 }
@@ -94,8 +107,8 @@ function ReviewVendorModal({ vendor, onClose, onApprove, onReject }: ReviewModal
       <div className="mb-6">
         <p className="text-sm font-semibold text-text-primary mb-2">Documents</p>
         <div className="space-y-3">
-          <FileTile name="CAC Certificate.pdf" />
-          <FileTile name="Business Registration.pdf" />
+          <FileTile name="NIN Document" url={vendor.ninDocumentUrl} />
+          <FileTile name="CAC / Business Registration" url={vendor.cacDocumentUrl} />
         </div>
       </div>
 
@@ -239,8 +252,8 @@ function VendorDetailsModal({ vendor, onClose, onRereview }: DetailsModalProps) 
       <div className="mb-6">
         <p className="text-sm font-semibold text-text-primary mb-2">Documents</p>
         <div className="space-y-3">
-          <FileTile name="CAC Certificate.pdf" />
-          <FileTile name="Business Registration.pdf" />
+          <FileTile name="NIN Document" url={vendor.ninDocumentUrl} />
+          <FileTile name="CAC / Business Registration" url={vendor.cacDocumentUrl} />
         </div>
       </div>
 
