@@ -2,16 +2,20 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+import { getDashboard } from "@/lib/admin-api";
 
+// `badgeKey` maps to a live count from the admin dashboard stats. Content
+// Moderation has no backend yet, so it carries no badge.
 const navItems = [
   { label: "OPERATIONS", type: "section" },
   { label: "Dashboard", href: "/dashboard", icon: "grid" },
-  { label: "Vendor Verification", href: "/vendors", icon: "shield", badge: "12" },
+  { label: "Vendor Verification", href: "/vendors", icon: "shield", badgeKey: "pendingKyc" },
   { label: "Users", href: "/users", icon: "users" },
   { label: "Categories", href: "/categories", icon: "tag" },
   { label: "Earnings", href: "/earnings", icon: "bar-chart" },
-  { label: "Disputes", href: "/disputes", icon: "scale", badge: "10" },
-  { label: "Content Moderation", href: "/content-moderation", icon: "flag", badge: "23" },
+  { label: "Disputes", href: "/disputes", icon: "scale", badgeKey: "openDisputes" },
+  { label: "Content Moderation", href: "/content-moderation", icon: "flag" },
   { label: "Platform Settings", href: "/platform-settings", icon: "settings" },
   { label: "ADMINISTRATION", type: "section" },
   { label: "Audit Trail", href: "/audit-trail", icon: "receipt" },
@@ -40,6 +44,24 @@ const Icon = ({ name }: { name: string }) => {
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const [counts, setCounts] = useState<Record<string, number>>({});
+
+  useEffect(() => {
+    let alive = true;
+    getDashboard()
+      .then((d) => {
+        if (!alive) return;
+        setCounts({
+          pendingKyc: d.stats.pendingKyc,
+          openDisputes: d.stats.openDisputes,
+        });
+      })
+      .catch(() => {});
+    return () => {
+      alive = false;
+    };
+  }, []);
+
   return (
     <aside className="w-[270px] min-h-screen bg-sidebar flex flex-col flex-shrink-0">
       {/* Logo */}
@@ -81,9 +103,9 @@ export default function Sidebar() {
                 <Icon name={item.icon!} />
               </span>
               <span className={`flex-1 text-[13.5px] ${isActive ? "font-semibold" : "font-normal"}`}>{item.label}</span>
-              {item.badge && (
+              {item.badgeKey && counts[item.badgeKey] > 0 && (
                 <span className="bg-sidebar-badge text-[#94A3B8] text-[11px] font-semibold px-2 py-0.5 rounded-full">
-                  {item.badge}
+                  {counts[item.badgeKey]}
                 </span>
               )}
             </Link>
