@@ -12,11 +12,14 @@ export default function TopBar() {
   const [search, setSearch] = useState("");
   const { user, logout } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [notifOpen, setNotifOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const notifRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     function handler(e: MouseEvent) {
       if (ref.current && !ref.current.contains(e.target as Node)) setMenuOpen(false);
+      if (notifRef.current && !notifRef.current.contains(e.target as Node)) setNotifOpen(false);
     }
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
@@ -39,6 +42,30 @@ export default function TopBar() {
       </div>
 
       <div className="flex-1" />
+
+      {/* Notifications */}
+      <div className="relative" ref={notifRef}>
+        <button
+          onClick={() => setNotifOpen((v) => !v)}
+          aria-label="Notifications"
+          className="w-10 h-10 rounded-full flex items-center justify-center border border-primary/30 hover:bg-primary-light/50 transition-colors cursor-pointer"
+        >
+          <svg className="text-text-secondary" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C8.64 5.36 7 7.92 7 11v5l-2 2v1h14v-1l-2-2z" />
+          </svg>
+        </button>
+        {notifOpen && (
+          <div className="absolute right-0 top-12 z-20 bg-white border border-border rounded-xl shadow-lg w-[300px] overflow-hidden">
+            <div className="px-4 py-3 border-b border-border">
+              <p className="text-sm font-semibold text-text-primary">Notifications</p>
+            </div>
+            <div className="px-4 py-8 text-center">
+              <p className="text-sm text-text-secondary">You&apos;re all caught up</p>
+              <p className="text-xs text-text-hint mt-1">No new notifications</p>
+            </div>
+          </div>
+        )}
+      </div>
 
       {/* User card + menu */}
       <div className="relative" ref={ref}>
