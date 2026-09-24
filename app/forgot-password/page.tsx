@@ -2,10 +2,37 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { API_URL } from "@/lib/api";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const router = useRouter();
+
+  const handleSend = async () => {
+    if (!email.trim()) { setError("Please enter your email address"); return; }
+    setLoading(true); setError("");
+    try {
+      const res = await fetch(`${API_URL}/api/auth/email-otp/send-verification-otp`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email.trim(), type: "forget-password" }),
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => null);
+        setError(body?.message ?? "Couldn't send the reset code. Please try again.");
+        return;
+      }
+      // Carry the email forward (do not reveal whether the account exists).
+      sessionStorage.setItem("pv_reset_email", email.trim());
+      router.push("/confirm-otp");
+    } catch {
+      setError("Couldn't reach the server. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <div className="flex h-screen">
       <div className="flex-1 flex items-center justify-center bg-white px-12">
@@ -26,9 +53,10 @@ export default function ForgotPasswordPage() {
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
             Back to login
           </Link>
-          <button onClick={() => router.push("/confirm-otp")}
-            className="w-full h-12 bg-primary hover:bg-primary-dark text-white font-semibold rounded-xl transition-colors btn-glossy">
-            Sign in
+          {error && <p className="text-sm text-red-600 mb-4">{error}</p>}
+          <button onClick={handleSend} disabled={loading}
+            className="w-full h-12 bg-primary hover:bg-primary-dark text-white font-semibold rounded-xl transition-colors btn-glossy disabled:opacity-60">
+            {loading ? "Sending…" : "Send Reset Code"}
           </button>
         </div>
       </div>

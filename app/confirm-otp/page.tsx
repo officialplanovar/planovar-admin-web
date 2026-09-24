@@ -1,12 +1,27 @@
 "use client";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 export default function ConfirmOtpPage() {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
+  const [error, setError] = useState("");
   const inputs = useRef<(HTMLInputElement | null)[]>([]);
   const router = useRouter();
+
+  useEffect(() => {
+    // Must arrive here from the forgot-password step.
+    if (typeof window !== "undefined" && !sessionStorage.getItem("pv_reset_email")) {
+      router.replace("/forgot-password");
+    }
+  }, [router]);
+
+  const handleContinue = () => {
+    const code = otp.join("");
+    if (code.length !== 6) { setError("Please enter the 6-digit code"); return; }
+    sessionStorage.setItem("pv_reset_otp", code);
+    router.push("/reset-password");
+  };
 
   const handleChange = (i: number, v: string) => {
     if (v.length > 1) return;
@@ -40,9 +55,10 @@ export default function ConfirmOtpPage() {
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
             Back to login
           </Link>
-          <button onClick={() => router.push("/reset-password")}
+          {error && <p className="text-sm text-red-600 text-center mb-4">{error}</p>}
+          <button onClick={handleContinue}
             className="w-full h-12 bg-primary hover:bg-primary-dark text-white font-semibold rounded-xl transition-colors btn-glossy">
-            Sign in
+            Continue
           </button>
         </div>
       </div>

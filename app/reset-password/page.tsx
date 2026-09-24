@@ -1,16 +1,56 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { API_URL } from "@/lib/api";
 
 export default function ResetPasswordPage() {
   const [newPw, setNewPw] = useState("");
   const [confirmPw, setConfirmPw] = useState("");
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const router = useRouter();
   const hasUpper = /[A-Z]/.test(newPw);
   const hasNumber = /\d/.test(newPw);
   const hasSpecial = /[@$%!#^&*]/.test(newPw);
+
+  useEffect(() => {
+    if (typeof window !== "undefined" &&
+        (!sessionStorage.getItem("pv_reset_email") || !sessionStorage.getItem("pv_reset_otp"))) {
+      router.replace("/forgot-password");
+    }
+  }, [router]);
+
+  const handleReset = async () => {
+    if (newPw.length < 8 || !hasUpper || !hasNumber || !hasSpecial) {
+      setError("Password must be 8+ characters with a capital letter, a number, and a special character");
+      return;
+    }
+    if (newPw !== confirmPw) { setError("The passwords don't match"); return; }
+    const email = sessionStorage.getItem("pv_reset_email") ?? "";
+    const otp = sessionStorage.getItem("pv_reset_otp") ?? "";
+    setLoading(true); setError("");
+    try {
+      const res = await fetch(`${API_URL}/api/auth/email-otp/reset-password`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, otp, password: newPw }),
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => null);
+        setError(body?.message ?? "Invalid or expired code. Please restart the reset.");
+        return;
+      }
+      sessionStorage.removeItem("pv_reset_email");
+      sessionStorage.removeItem("pv_reset_otp");
+      router.push("/login");
+    } catch {
+      setError("Couldn't reach the server. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="flex h-screen">
@@ -57,9 +97,10 @@ export default function ResetPasswordPage() {
               </div>
             ))}
           </div>
-          <button onClick={() => { localStorage.setItem("admin_isLoggedIn","true"); router.push("/dashboard"); }}
-            className="w-full h-12 bg-primary hover:bg-primary-dark text-white font-semibold rounded-xl transition-colors btn-glossy">
-            Create Password
+          {error && <p className="text-sm text-red-600 mb-4">{error}</p>}
+          <button onClick={handleReset} disabled={loading}
+            className="w-full h-12 bg-primary hover:bg-primary-dark text-white font-semibold rounded-xl transition-colors btn-glossy disabled:opacity-60">
+            {loading ? "Resetting…" : "Reset Password"}
           </button>
         </div>
       </div>
