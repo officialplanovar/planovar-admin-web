@@ -15,7 +15,6 @@ const navItems = [
   { label: "Categories", href: "/categories", icon: "tag" },
   { label: "Earnings", href: "/earnings", icon: "bar-chart" },
   { label: "Disputes", href: "/disputes", icon: "scale", badgeKey: "openDisputes" },
-  { label: "Content Moderation", href: "/content-moderation", icon: "flag" },
   { label: "Platform Settings", href: "/platform-settings", icon: "settings" },
   { label: "ADMINISTRATION", type: "section" },
   { label: "Audit Trail", href: "/audit-trail", icon: "receipt" },

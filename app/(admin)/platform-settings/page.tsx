@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { apiFetch } from '@/lib/api';
 import Modal from '@/components/ui/Modal';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
@@ -86,9 +87,47 @@ function ToggleRow({
 function GeneralSection() {
   const [platformName, setPlatformName] = useState('Planovar');
   const [supportEmail, setSupportEmail] = useState('support@planovar.com');
-  const [currency, setCurrency] = useState('NGN — Nigerian Naira');
+  const [currency, setCurrency] = useState('NGN');
   const [region, setRegion] = useState('Nigeria');
   const [maintenance, setMaintenance] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    apiFetch<Record<string, unknown>>('/admin/settings')
+      .then((s) => {
+        setPlatformName((s.platformName as string) ?? 'Planovar');
+        setSupportEmail((s.supportEmail as string) ?? '');
+        setCurrency((s.currency as string) ?? 'NGN');
+        setRegion((s.region as string) ?? 'Nigeria');
+        setMaintenance((s.maintenanceMode as boolean) ?? false);
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
+
+  const save = async () => {
+    setSaving(true);
+    setError('');
+    setSaved(false);
+    try {
+      await apiFetch('/admin/settings', {
+        method: 'PATCH',
+        body: { platformName, supportEmail, currency, region, maintenanceMode: maintenance },
+      });
+      setSaved(true);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Could not save settings');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (loading) {
+    return <div className="text-sm text-text-secondary py-6">Loading settings…</div>;
+  }
 
   return (
     <div className="space-y-5">
@@ -100,8 +139,13 @@ function GeneralSection() {
       </FormField>
       <FormField label="Default Currency">
         <Select value={currency} onChange={(e) => setCurrency(e.target.value)}>
-          {['NGN — Nigerian Naira', 'USD — US Dollar', 'GBP — British Pound', 'EUR — Euro'].map((o) => (
-            <option key={o}>{o}</option>
+          {[
+            ['NGN', 'NGN — Nigerian Naira'],
+            ['USD', 'USD — US Dollar'],
+            ['GBP', 'GBP — British Pound'],
+            ['EUR', 'EUR — Euro'],
+          ].map(([v, l]) => (
+            <option key={v} value={v}>{l}</option>
           ))}
         </Select>
       </FormField>
@@ -118,6 +162,15 @@ function GeneralSection() {
         on={maintenance}
         onChange={setMaintenance}
       />
+      {error && <p className="text-sm text-red-600">{error}</p>}
+      {saved && <p className="text-sm text-green-600">Settings saved.</p>}
+      <button
+        onClick={save}
+        disabled={saving}
+        className="h-11 px-6 bg-primary hover:bg-primary-dark text-white font-semibold rounded-xl transition-colors disabled:opacity-60"
+      >
+        {saving ? 'Saving…' : 'Save Changes'}
+      </button>
     </div>
   );
 }
@@ -361,7 +414,6 @@ export default function PlatformSettingsPage() {
           <Card padding="p-8">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-base font-bold text-text-primary">{active}</h2>
-              <Button variant="primary">Save Changes</Button>
             </div>
             {renderContent()}
           </Card>
