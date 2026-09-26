@@ -9,8 +9,11 @@ export interface AdminVendor {
   phone: string;
   avatarText: string;
   avatarColor: string;
-  ninDocumentUrl?: string | null;
-  cacDocumentUrl?: string | null;
+  idDocumentUrl?: string | null;
+  idType?: string | null;
+  idCountry?: string | null;
+  businessRegDocumentUrl?: string | null;
+  businessRegCountry?: string | null;
 }
 
 export interface AdminListing {

@@ -123,8 +123,11 @@ interface ApiVendor {
   subscriptionTier: string;
   kycStatus: "NOT_SUBMITTED" | "SUBMITTED" | "APPROVED" | "REJECTED";
   isVerified: boolean;
-  ninDocumentUrl?: string | null;
-  cacDocumentUrl?: string | null;
+  idDocumentUrl?: string | null;
+  idType?: string | null;
+  idCountry?: string | null;
+  businessRegDocumentUrl?: string | null;
+  businessRegCountry?: string | null;
   kycSubmittedAt?: string | null;
   createdAt: string;
   user?: { id: string; name: string; email: string; phone?: string | null; isActive: boolean } | null;
@@ -149,8 +152,11 @@ function mapVendor(v: ApiVendor): AdminVendor {
     phone: v.user?.phone ?? "—",
     avatarText: initials(name),
     avatarColor: colorFor(v.id),
-    ninDocumentUrl: v.ninDocumentUrl ?? null,
-    cacDocumentUrl: v.cacDocumentUrl ?? null,
+    idDocumentUrl: v.idDocumentUrl ?? null,
+    idType: v.idType ?? null,
+    idCountry: v.idCountry ?? null,
+    businessRegDocumentUrl: v.businessRegDocumentUrl ?? null,
+    businessRegCountry: v.businessRegCountry ?? null,
   };
 }
 

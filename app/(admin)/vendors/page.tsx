@@ -107,8 +107,8 @@ function ReviewVendorModal({ vendor, onClose, onApprove, onReject }: ReviewModal
       <div className="mb-6">
         <p className="text-sm font-semibold text-text-primary mb-2">Documents</p>
         <div className="space-y-3">
-          <FileTile name="NIN Document" url={vendor.ninDocumentUrl} />
-          <FileTile name="CAC / Business Registration" url={vendor.cacDocumentUrl} />
+          <FileTile name="Government ID" url={vendor.idDocumentUrl} />
+          <FileTile name="Business Registration" url={vendor.businessRegDocumentUrl} />
         </div>
       </div>
 
@@ -252,8 +252,8 @@ function VendorDetailsModal({ vendor, onClose, onRereview }: DetailsModalProps) 
       <div className="mb-6">
         <p className="text-sm font-semibold text-text-primary mb-2">Documents</p>
         <div className="space-y-3">
-          <FileTile name="NIN Document" url={vendor.ninDocumentUrl} />
-          <FileTile name="CAC / Business Registration" url={vendor.cacDocumentUrl} />
+          <FileTile name="Government ID" url={vendor.idDocumentUrl} />
+          <FileTile name="Business Registration" url={vendor.businessRegDocumentUrl} />
         </div>
       </div>
 
